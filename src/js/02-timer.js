@@ -25,6 +25,7 @@ const options = {
     }
     isValid = true;
     choosenDate = selectedDates[0].getTime();
+    Notiflix.Notify.info('Press the start-button to start the timer');
   },
 };
 
