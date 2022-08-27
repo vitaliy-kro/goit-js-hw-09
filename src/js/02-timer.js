@@ -1,5 +1,6 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import Notiflix from 'notiflix';
 const refs = {
   date: document.querySelector(['#datetime-picker']),
   buttonStart: document.querySelector('[data-start]'),
@@ -8,7 +9,7 @@ const refs = {
   minutes: document.querySelector('[data-minutes]'),
   seconds: document.querySelector('[data-seconds]'),
 };
-let isValid = true;
+let isValid = null;
 let choosenDate = null;
 let timeToEnd = null;
 const options = {
@@ -19,9 +20,10 @@ const options = {
   onClose(selectedDates) {
     if (selectedDates[0].getTime() <= Date.now()) {
       isValid = false;
-      window.alert('Please choose a date in the future');
+      Notiflix.Notify.failure('Please choose a date in the future');
       return;
     }
+    isValid = true;
     choosenDate = selectedDates[0].getTime();
   },
 };
@@ -32,18 +34,20 @@ refs.buttonStart.addEventListener('click', onButtonStartClick);
 
 function onButtonStartClick() {
   if (!isValid) {
-    window.alert('Please choose a date in the future');
+    Notiflix.Notify.failure('Please choose a date in the future');
     return;
   }
   timer();
+  Notiflix.Notify.success('Timer starts!');
 }
 
 function timer() {
-  setInterval(() => {
+  const time = setInterval(() => {
     const currentTime = Date.now();
     timeToEnd = choosenDate - currentTime;
     onDisplayTimeSet(convertMs(timeToEnd));
     if (timeToEnd < 1000) {
+      Notiflix.Notify.info('Timer has expired');
       clearInterval(time);
     }
   }, 1000);
