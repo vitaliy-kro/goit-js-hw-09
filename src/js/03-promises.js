@@ -1,5 +1,5 @@
 import Notiflix from 'notiflix';
-let promiseCount = 1;
+let promiseCount = 0;
 let delayRefValue = 0;
 const refs = {
   form: document.querySelector('.form'),
@@ -16,6 +16,7 @@ function onButtonClick(e) {
     promiseCount = 1;
     e.preventDefault();
     delayRefValue = Number(refs.delay.value);
+
     const functionInterval = setInterval(() => {
       if (Number(refs.amount.value) === promiseCount) {
         clearInterval(functionInterval);
@@ -25,9 +26,9 @@ function onButtonClick(e) {
   }
 }
 function createPromise(position, delay) {
-  promiseCount += 1;
   return new Promise((resolve, reject) => {
-    delayRefValue += Number(refs.step.value);
+    promiseNumberCount();
+    delayCount();
     const shouldResolve = Math.random() > 0.3;
     if (shouldResolve) {
       resolve(`Fulfilled promise ${position} in ${delay}ms`);
@@ -41,4 +42,12 @@ function createPromise(position, delay) {
     .catch(error => {
       Notiflix.Notify.failure(error);
     });
+}
+
+function delayCount() {
+  delayRefValue += Number(refs.step.value);
+}
+
+function promiseNumberCount() {
+  promiseCount += 1;
 }
