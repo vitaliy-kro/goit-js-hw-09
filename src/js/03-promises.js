@@ -12,21 +12,15 @@ refs.form.addEventListener('click', event => {
 });
 
 function onButtonClick(e) {
-  promiseCount = 1;
   if (e.target.type === 'submit') {
+    promiseCount = 1;
     e.preventDefault();
     delayRefValue = Number(refs.delay.value);
     const functionInterval = setInterval(() => {
       if (Number(refs.amount.value) === promiseCount) {
         clearInterval(functionInterval);
       }
-      createPromise(promiseCount, delayRefValue)
-        .then(result => {
-          Notiflix.Notify.success(result);
-        })
-        .catch(error => {
-          Notiflix.Notify.failure(error);
-        });
+      createPromise(promiseCount, delayRefValue);
     }, delayRefValue);
   }
 }
@@ -40,5 +34,11 @@ function createPromise(position, delay) {
     } else {
       reject(`Rejected promise ${position} in ${delay}ms`);
     }
-  });
+  })
+    .then(result => {
+      Notiflix.Notify.success(result);
+    })
+    .catch(error => {
+      Notiflix.Notify.failure(error);
+    });
 }
