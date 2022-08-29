@@ -1,6 +1,5 @@
 import Notiflix from 'notiflix';
-let promiseCount = 0;
-let delayRefValue = 0;
+
 const refs = {
   form: document.querySelector('.form'),
   delay: document.querySelector('[name=delay]'),
@@ -13,41 +12,30 @@ refs.form.addEventListener('click', event => {
 
 function onButtonClick(e) {
   if (e.target.type === 'submit') {
-    promiseCount = 1;
+    let delayRefValue = Number(refs.delay.value);
     e.preventDefault();
-    delayRefValue = Number(refs.delay.value);
 
-    const functionInterval = setInterval(() => {
-      if (Number(refs.amount.value) === promiseCount) {
-        clearInterval(functionInterval);
-      }
-      createPromise(promiseCount, delayRefValue);
-    }, delayRefValue);
+    for (let i = 0; i < refs.amount.value; i += 1) {
+      createPromise(i + 1, delayRefValue)
+        .then(result => {
+          Notiflix.Notify.success(result);
+        })
+        .catch(error => {
+          Notiflix.Notify.failure(error);
+        });
+      delayRefValue += Number(refs.step.value);
+    }
   }
 }
 function createPromise(position, delay) {
   return new Promise((resolve, reject) => {
-    promiseNumberCount();
-    delayCount();
     const shouldResolve = Math.random() > 0.3;
-    if (shouldResolve) {
-      resolve(`Fulfilled promise ${position} in ${delay}ms`);
-    } else {
-      reject(`Rejected promise ${position} in ${delay}ms`);
-    }
-  })
-    .then(result => {
-      Notiflix.Notify.success(result);
-    })
-    .catch(error => {
-      Notiflix.Notify.failure(error);
-    });
-}
-
-function delayCount() {
-  delayRefValue += Number(refs.step.value);
-}
-
-function promiseNumberCount() {
-  promiseCount += 1;
+    setTimeout(() => {
+      if (shouldResolve) {
+        resolve(`Fulfilled promise ${position} in ${delay}ms`);
+      } else {
+        reject(`Rejected promise ${position} in ${delay}ms`);
+      }
+    }, delay);
+  });
 }
