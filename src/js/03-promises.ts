@@ -1,24 +1,23 @@
 import Notiflix from 'notiflix';
 
 const refs = {
-  form: document.querySelector('.form'),
-  delay: document.querySelector('[name=delay]'),
-  step: document.querySelector('[name=step]'),
-  amount: document.querySelector('[name=amount]'),
+  form: document.querySelector('.form')!,
+  delay: document.querySelector<HTMLInputElement>('[name=delay]')!,
+  step: document.querySelector<HTMLInputElement>('[name=step]')!,
+  amount: document.querySelector<HTMLInputElement>('[name=amount]')!,
 };
-refs.form.addEventListener('click', event => {
-  onButtonClick(event);
-});
+refs.form.addEventListener('click', onButtonClick);
 
-function onButtonClick(e) {
-  if (e.target.type === 'submit') {
+function onButtonClick(e: Event) {
+  const submitButton = e.target as HTMLButtonElement;
+  if (submitButton.type === 'submit') {
     let delayRefValue = Number(refs.delay.value);
     e.preventDefault();
 
-    for (let i = 0; i < refs.amount.value; i += 1) {
+    for (let i = 0; i < Number(refs.amount.value); i += 1) {
       createPromise(i + 1, delayRefValue)
-        .then(result => {
-          Notiflix.Notify.success(result);
+        .then((result) => {
+          Notiflix.Notify.success(result as string);
         })
         .catch(error => {
           Notiflix.Notify.failure(error);
@@ -27,7 +26,7 @@ function onButtonClick(e) {
     }
   }
 }
-function createPromise(position, delay) {
+function createPromise(position: number, delay: number) {
   return new Promise((resolve, reject) => {
     const shouldResolve = Math.random() > 0.3;
     setTimeout(() => {

@@ -1,23 +1,27 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
+import { DateTypes } from '../types/timer.types';
+
 const refs = {
-  date: document.querySelector(['#datetime-picker']),
-  buttonStart: document.querySelector('[data-start]'),
-  days: document.querySelector('[data-days]'),
-  hours: document.querySelector('[data-hours]'),
-  minutes: document.querySelector('[data-minutes]'),
-  seconds: document.querySelector('[data-seconds]'),
+  date: document.querySelector('#datetime-picker') ,
+  buttonStart: document.querySelector('[data-start]')!,
+  days: document.querySelector('[data-days]')!,
+  hours: document.querySelector('[data-hours]')!,
+  minutes: document.querySelector('[data-minutes]')!,
+  seconds: document.querySelector('[data-seconds]')!,
 };
-let isValid = null;
-let choosenDate = null;
+
+let isValid = false;
+let choosenDate: number | null = null;
 let timeToEnd = null;
+
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-  onClose(selectedDates) {
+  onClose(selectedDates: any) {
     if (selectedDates[0].getTime() <= Date.now()) {
       isValid = false;
       Notiflix.Notify.failure('Please choose a date in the future');
@@ -29,7 +33,7 @@ const options = {
   },
 };
 
-flatpickr(refs.date, options);
+flatpickr(refs.date as Node, options);
 
 refs.buttonStart.addEventListener('click', onButtonStartClick);
 
@@ -43,9 +47,13 @@ function onButtonStartClick() {
 }
 
 function timer() {
+  setTimer()
+}
+
+function setTimer() {
   const time = setInterval(() => {
     const currentTime = Date.now();
-    timeToEnd = choosenDate - currentTime;
+    timeToEnd = choosenDate! - currentTime;
     onDisplayTimeSet(convertMs(timeToEnd));
     if (timeToEnd < 1000) {
       Notiflix.Notify.info('Timer has expired');
@@ -53,7 +61,9 @@ function timer() {
     }
   }, 1000);
 }
-function convertMs(ms) {
+
+
+function convertMs(ms: number) {
   // Number of milliseconds per unit of time
   const second = 1000;
   const minute = second * 60;
@@ -74,11 +84,11 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-function addLeadingZero(value) {
+function addLeadingZero(value: number) {
   return String(value).padStart(2, '0');
 }
 
-function onDisplayTimeSet({ days, hours, minutes, seconds }) {
+function onDisplayTimeSet({ days, hours, minutes, seconds }: DateTypes) {
   refs.days.textContent = days;
   refs.hours.textContent = hours;
   refs.minutes.textContent = minutes;
